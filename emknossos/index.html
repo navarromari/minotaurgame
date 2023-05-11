@@ -58,9 +58,9 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/emknossos.loader.js";
       var config = {
-        dataUrl: buildUrl + "/emknossos.data.br",
-        frameworkUrl: buildUrl + "/emknossos.framework.js.br",
-        codeUrl: buildUrl + "/emknossos.wasm.br",
+        dataUrl: buildUrl + "/emknossos.data.unityweb",
+        frameworkUrl: buildUrl + "/emknossos.framework.js.unityweb",
+        codeUrl: buildUrl + "/emknossos.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "Minotauro",
@@ -85,6 +85,7 @@
         canvas.style.width = "960px";
         canvas.style.height = "600px";
       }
+      canvas.style.background = "url('" + buildUrl + "/emknossos.jpg') center / cover";
       loadingBar.style.display = "block";
 
       var script = document.createElement("script");

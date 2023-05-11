@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class DisplaySpeech : MonoBehaviour
 {
@@ -20,10 +21,19 @@ public class DisplaySpeech : MonoBehaviour
     public GameObject[] characters;
     public GameObject finalPanels;
     public Image[] panels;
+    public static string SelectedLanguage;
    
     void Awake()
-    //initial conditions (intro: only backgroundcanvas and speechbox active)
     {
+        if(!PlayerPrefs.HasKey("SelectedLanguage"))
+        {
+            // If the language is not set, load the language selection scene
+            SceneManager.LoadScene("LanguageSelection");
+            return;
+        }
+
+        // If the language is set, continue with the main game
+        //initial conditions (intro: only backgroundcanvas and speechbox active)
         speakerBox.SetActive(false);
         speechBox.SetActive(true);
         nextButton.SetActive(false);
@@ -37,7 +47,11 @@ public class DisplaySpeech : MonoBehaviour
     }
     void Start()
     {
-        speaking = StartCoroutine(Speaking(narratorSpeech, 0));
+        if(PlayerPrefs.HasKey("SelectedLanguage")){
+            DisplaySpeech.SelectedLanguage = PlayerPrefs.GetString("SelectedLanguage");
+            setSpeeches();
+            speaking = StartCoroutine(Speaking(narratorSpeech, 0));
+        }
     }
 
     void Update() 
@@ -291,67 +305,140 @@ public class DisplaySpeech : MonoBehaviour
         isEnd = true;
     }
 
-    //intro speech
-    string[][] narratorSpeech = {new string[] {"Chega aquela época do ano, temida por todos em Atenas. Quatorze jovens serão levados à Creta como sacrifício ao terrível minotauro.", "Você, um grande herói ateniense, infiltrou-se entre os sacrifícios para enfrentar o monstro meio homem e meio touro e libertar seu povo desse tributo tão cruel.", "Agora, você caminha pelo grande palácio de Knossos, preparado para o inevitável encontro com a besta comedora de gente. Em uma mão, o novelo de Ariadne, que te guiará no caminho de volta, na outra, a espada que dará fim a anos de sofrimento ateniense.", "....", "Ele está vindo! Prepare sua espada!"}};
+    string[][] narratorSpeech;
+    string[][] minotaurSpeech;
+    string[][] heroSpeech;
+    string[][][][] pathsSpeech;
 
-    string[][] minotaurSpeech = 
-    {
-        new string[] {"O que pensa que está fazendo com essa arma apontada para mim, tampinha?"},
+    void setSpeeches(){
+        if (SelectedLanguage == "Portuguese"){
+            //intro speech
+            narratorSpeech = new string[][] {new string[] {"Chega aquela época do ano, temida por todos em Atenas. Quatorze jovens serão levados à Creta como sacrifício ao terrível minotauro.", "Você, um grande herói ateniense, infiltrou-se entre os sacrifícios para enfrentar o monstro meio homem e meio touro e libertar seu povo desse tributo tão cruel.", "Agora, você caminha pelo grande palácio de Knossos, preparado para o inevitável encontro com a besta comedora de gente. Em uma mão, o novelo de Ariadne, que te guiará no caminho de volta, na outra, a espada que dará fim a anos de sofrimento ateniense.", "....", "Ele está vindo! Prepare sua espada!"}};
 
-        new string[] {"Quem?"}, 
+            minotaurSpeech = new string[][]
+            {
+                new string[] {"O que pensa que está fazendo com essa arma apontada para mim, tampinha?"},
 
-        new string[] {"…", "Vá me desculpar, mas eu não como há um ano, e não estou muito no humor para me atualizar sobre o mundo lá fora.", "Você vai ser minha primeira refeição de hoje e eu vou usar essa sua espadinha de palito de dentes e esse novelo de fio dental!", "Aliás, que palhaçada é essa de novelo de lã? Veio aqui tricotar, ó grande herói?"}
-    };
+                new string[] {"Quem?"}, 
 
-    string[][] heroSpeech =
-    {
-        new string[] {"Me chamo Teseu, filho do rei Egeu de Atenas e do deus dos mares Poseidon, e vim acabar com a carnificina do meu povo!"},
+                new string[] {"…", "Vá me desculpar, mas eu não como há um ano, e não estou muito no humor para me atualizar sobre o mundo lá fora.", "Você vai ser minha primeira refeição de hoje e eu vou usar essa sua espadinha de palito de dentes e esse novelo de fio dental!", "Aliás, que palhaçada é essa de novelo de lã? Veio aqui tricotar, ó grande herói?"}
+            };
 
-        new string[] {"Não espero que você, enfurnado dentro desse labirinto, saiba quem eu sou, tampouco que tenha ouvido falar de meus grandes feitos.", "Duvido que ao menos tenha ouvido falar dos Argonautas ou da grande guerra contra as Amazonas."}
-    };
+            heroSpeech = new string[][]
+            {
+                new string[] {"Me chamo Teseu, filho do rei Egeu de Atenas e do deus dos mares Poseidon, e vim acabar com a carnificina do meu povo!"},
 
-    //string [path][speaker][speech][]
-    string[][][][] pathsSpeech = 
-    {
-        new string[][][] //path 1
-        {
-            new string[][] //new minotaurSpeech
+                new string[] {"Não espero que você, enfurnado dentro desse labirinto, saiba quem eu sou, tampouco que tenha ouvido falar de meus grandes feitos.", "Duvido que ao menos tenha ouvido falar dos Argonautas ou da grande guerra contra as Amazonas."}
+            };
+
+            //string [path][speaker][speech][]
+            pathsSpeech = new string[][][][]
             {
-                new string[] {"Monstro? Para um nobre você é muito desinformado!", "Os monstros tem uma filiação própria, eles são aqueles nascidos de dois monstros, a Equidna, um monstro metade mulher e metade serpente e de Tifão, um monstro com cem cabeças de serpentes com línguas negras e..."}
-            },
-            new string[][] //new heroSpeech
-            {
-                new string[] {"Não me importa! Seja lá o que você for, eu não posso permitir que você continue cometendo atrocidades e trazendo sofrimento para as famílias atenienses!"}
-            }
-        },
-        new string[][][] //path 2
-        {
-            new string[][] //new minotaurSpeech
-            {
-                new string[] {"Ariadne é minha irmã!", "Aí você me complica, não posso comer o meu cunhado!", "E agora que você comentou, me deu uma vontade de comer um bem casado…"},
-                new string[] {"Claro que não! Eu só como gente porque é a única coisa que me mandam.", "Eu queria mesmo era comer uma pizza, arroz e feijão, guaraná… ", "Suco de caju, goiabada, brigadeiro…"}, 
-                new string[] {"Agora somos família! Pode me chamar de Astério, é o meu nome, homenagem ao meu avô."} 
-            },
-            new string[][] //new heroSpeech
-            {
-                new string[] {"Bem casado? Achei que você só comia gente!"}, 
-                new string[] {"Ô Minotauro, vamos fazer o seguinte então…"}, 
-                new string[] {"Então, Astério, vamos sair daqui juntos!", "Seguindo esse fio de novelo a gente encontra o caminho de volta, e você vai poder comer o quanto quiser no buffet do meu casamento!"}
-            }
-        },
-            new string[][][] //path 3
-        {
-            new string[][] //new minotaurSpeech
-            {
-                new string[] {"VAQUINHA?"},
-                new string[] {"Você é muito do falador, isso sim! Cheio das histórias do mundo lá fora, mas não sabe nada do meu labirinto. Quem ainda não entendeu é você! Você está em desvantagem!"}
-            },
-            new string[][] //new heroSpeech
-            {
-                new string[] {"Calma, mimosa! Escuta, eu já ganhei essa parada. Eu sou filho de Poseidon, sou capaz de me comunicar com os deuses, eu tenho ajuda e proteção divina.", "Sou um grande herói guiado por ideais nobres, pela coragem, pela justiça, pelo altruísmo e…"}
-            }
+                new string[][][] //path 1
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"Monstro? Para um nobre você é muito desinformado!", "Os monstros tem uma filiação própria, eles são aqueles nascidos de dois monstros, a Equidna, um monstro metade mulher e metade serpente e de Tifão, um monstro com cem cabeças de serpentes com línguas negras e..."}
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"Não me importa! Seja lá o que você for, eu não posso permitir que você continue cometendo atrocidades e trazendo sofrimento para as famílias atenienses!"}
+                    }
+                },
+                new string[][][] //path 2
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"Ariadne é minha irmã!", "Aí você me complica, não posso comer o meu cunhado!", "E agora que você comentou, me deu uma vontade de comer um bem casado…"},
+                        new string[] {"Claro que não! Eu só como gente porque é a única coisa que me mandam.", "Eu queria mesmo era comer uma pizza, arroz e feijão, guaraná… ", "Suco de caju, goiabada, brigadeiro…"}, 
+                        new string[] {"Agora somos família! Pode me chamar de Astério, é o meu nome, homenagem ao meu avô."} 
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"Bem casado? Achei que você só comia gente!"}, 
+                        new string[] {"Ô Minotauro, vamos fazer o seguinte então…"}, 
+                        new string[] {"Então, Astério, vamos sair daqui juntos!", "Seguindo esse fio de novelo a gente encontra o caminho de volta, e você vai poder comer o quanto quiser no buffet do meu casamento!"}
+                    }
+                },
+                    new string[][][] //path 3
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"VAQUINHA?"},
+                        new string[] {"Você é muito do falador, isso sim! Cheio das histórias do mundo lá fora, mas não sabe nada do meu labirinto. Quem ainda não entendeu é você! Você está em desvantagem!"}
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"Calma, mimosa! Escuta, eu já ganhei essa parada. Eu sou filho de Poseidon, sou capaz de me comunicar com os deuses, eu tenho ajuda e proteção divina.", "Sou um grande herói guiado por ideais nobres, pela coragem, pela justiça, pelo altruísmo e…"}
+                    }
+                }
+            };
         }
-    };
+        else if (SelectedLanguage == "English"){
+            //intro speech
+            narratorSpeech = new string[][] {new string[] {"Comes that time of year, dreaded by everyone in Athens. Fourteen youths will be taken to Crete as a sacrifice to the terrible Minotaur.", "You, a great Athenian hero, infiltrated among the sacrifices to face the half-man, half-bull monster and free your people from this cruel tribute.", "Now, you walk through the great palace of Knossos, prepared for the inevitable encounter with the man-eating beast. In one hand, the thread of Ariadne, which will guide you on the way back, in the other, the sword that will put an end to years of Athenian suffering.", "....", "He is coming! Prepare your sword!"}};
+
+            minotaurSpeech = new string[][]
+            {
+                new string[] {"What do you think you're doing with that weapon pointed at me, shorty?"},
+
+                new string[] {"Who?"}, 
+
+                new string[] {"…", "Excuse me, but I haven't eaten in a year, and I'm not in the mood to catch up on the outside world.", "You're going to be my first meal of the day and I'm going to use your little toothpick sword and that ball of dental floss!", "By the way, what's this nonsense about a ball of wool? Did you come here to knit, oh great hero?"}
+            };
+
+            heroSpeech = new string[][]
+            {
+                new string[] {"My name is Theseus, son of King Aegeus of Athens and the god of the sea Poseidon, and I came to put an end to the slaughter of my people!"},
+
+                new string[] {"I don't expect you, holed up inside this labyrinth, to know who I am, nor have you heard of my great deeds.", "I doubt you've even heard of the Argonauts or the great war against the Amazons."}
+            };
+
+            //string [path][speaker][speech][]
+            pathsSpeech = new string[][][][]
+            {
+                new string[][][] //path 1
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"Monster? For a nobleman, you are very uninformed!", 
+                        "Monsters have their own lineage, they are those born from two monsters, Echidna, a monster half-woman and half-serpent, and Typhon, a monster with one hundred snake heads with black tongues and..."}
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"I don't care! Whatever you are, I cannot allow you to continue committing atrocities and bringing suffering to Athenian families!"}
+                    }
+                },
+                new string[][][] //path 2
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"Ariadne is my sister!",  "Now you've complicated things for me, I can't eat my brother-in-law!", "And now that you've mentioned it, I feel like having a wedding cake..."},
+                        new string[] {"Of course not! I only eat people because it's the only thing they send me as food.", "I really wish I could have some pizza, rice and beans, guarana...", "Cashew juice, guava paste, brigadeiro..."}, 
+                        new string[] {"Now we're family! You can call me Asterion, that's my name, a tribute to my grandfather."} 
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"Wedding cake? I thought you only ate people!"}, 
+                        new string[] {"Hey Minotaur, how about we do the following then..."}, 
+                        new string[] {"So, Asterion, let's get out of here together!", "By following this thread of yarn, we can find our way back, and you'll be able to eat as much as you want at the buffet of my wedding!"}
+                    }
+                },
+                    new string[][][] //path 3
+                {
+                    new string[][] //new minotaurSpeech
+                    {
+                        new string[] {"MOO COW?"},
+                        new string[] {"You're quite a chatterbox! Full of stories from the outside world, but you know nothing of my labyrinth. It's you who hasn't understood! You're at a disadvantage!"}
+                    },
+                    new string[][] //new heroSpeech
+                    {
+                        new string[] {"Easy there, sweetie! Listen, I've already won this battle. I'm the son of Poseidon, I can communicate with the gods, I have their help and divine protection.", "I am a great hero guided by noble ideals, courage, justice, altruism, and..."}
+                    }
+                }
+            };
+        }
+    }
 
     
     //Display Characters Images
