@@ -5,7 +5,7 @@ It was my first experience with Unity and game development, so it has a few reso
 
 The game was developed as part of an assessment activity for my literacy degree final project, which was a lecture on "Oral literature: the myth of the Minotaur and its representations in contemporary times".
 
-You can play it at: https://play.unity.com/mg/other/teste-llw 
+You can play it at: https://navarromari.itch.io/asterius
 
 ![image](https://user-images.githubusercontent.com/95860545/173480237-293412bb-0c41-4382-9361-a21e6da15d8d.png)
 
